@@ -1,7 +1,7 @@
 -- SQL script to create the tables necessary for lab 2 in EDAF75.
 -- MySQL version.
 --
--- Creates the tables users, movies, theaters, performances and reservations
+-- Creates the tables users, movies, theaters, shows and reservations
 -- populates them with (simulated) data.
 --
 -- We disable foreign key checks temporarily so we can delete the
@@ -33,12 +33,12 @@ CREATE TABLE theaters (
   PRIMARY KEY     (name)
 );
 
-DROP TABLE IF EXISTS performances;
-CREATE TABLE performances (
+DROP TABLE IF EXISTS shows;
+CREATE TABLE shows (
   movie           TEXT NOT NULL,
   theater         TEXT NOT NULL,
   date            DATE NOT NULL,
-  available_seats INTEGER NOT NULL CHECK (available_seats >= 0),
+  free_seats INTEGER NOT NULL CHECK (free_seats >= 0),
   PRIMARY KEY     (movie, date),
   FOREIGN KEY     (movie) REFERENCES movies(title),
   FOREIGN KEY     (theater) REFERENCES theaters(name)
@@ -52,7 +52,7 @@ CREATE TABLE reservations (
   date            TEXT NOT NULL,
   PRIMARY KEY     (reservation_id),
   FOREIGN KEY     (username) REFERENCES users(username),
-  FOREIGN KEY     (movie, date) REFERENCES performances(movie, date)
+  FOREIGN KEY     (movie, date) REFERENCES shows(movie, date)
 );
 
 -- We will do a lot of inserts, so we start a transaction to make it faster.
@@ -231,10 +231,10 @@ VALUES ('AMC', 500),
        ('Finnkino', 2150),
        ('Nordisk Film Biografer', 1350);
 
--- Populate the performances table.
+-- Populate the shows table.
 
 INSERT
-INTO   performances (movie, theater, date, available_seats)
+INTO   shows (movie, theater, date, free_seats)
 VALUES ('The Shawshank Redemption', 'AMC', '2019-12-06', 500),
        ('The Shawshank Redemption', 'Castello Lopes', '2023-10-16', 1750),
        ('The Shawshank Redemption', 'Cinamon', '2023-10-09', 1050),
