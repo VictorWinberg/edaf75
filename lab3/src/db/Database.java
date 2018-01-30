@@ -65,10 +65,14 @@ public class Database {
     }
 
     public boolean hasUser(String username) {
+        User user = getUser(username);
+        return user != null;
+    }
+
+    public User getUser(String username) {
         User user = null;
         String query =
-            "SELECT username, name, address, phone\n" +
-            "FROM   users\n" +
+            "SELECT * FROM users\n" +
             "WHERE  username = ?\n";
         try (PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, username);
@@ -78,9 +82,8 @@ public class Database {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
         }
-        return user != null;
+        return user;
     }
 
     public List<String> getMovies() {
