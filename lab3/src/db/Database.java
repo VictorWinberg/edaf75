@@ -83,6 +83,56 @@ public class Database {
         return user != null;
     }
 
+    public List<String> getMovies() {
+        List<String> movies = new LinkedList<String>();
+        String query = "SELECT * FROM movies";
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                movies.add(rs.getString("title"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return movies;
+    }
+
+    public List<String> getDates(String movieName) {
+        List<String> dates = new LinkedList<String>();
+        String query =
+            "SELECT date FROM shows\n" +
+			"WHERE movie = ?\n" +
+            "ORDER BY date";
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, movieName);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                dates.add(rs.getString("date"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return dates;
+    }
+
+    public Show getShow(String movieName, String date) {
+        Show show = null;
+        String query =
+            "SELECT * FROM shows\n" +
+            "WHERE movie = ? AND date = ?";
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, movieName);
+            ps.setString(2, date);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                show = new Show(rs);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return show;
+    }
+
     /*
     public List<...> ...(...) {
         List<...> found = new LinkedList<>();

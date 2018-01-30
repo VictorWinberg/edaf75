@@ -1,6 +1,6 @@
 package booking;
 
-import db.Database;
+import db.*;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -164,9 +164,10 @@ public class BookingPane extends BasicPane {
 	 */
 	public void entryActions() {
 		clearMessage();
+		clearFields();
 		currentUserNameLabel.setText(CurrentUser.instance().getCurrentUserId());
 		fillNameList();
-		clearFields();
+		fillDateList();
 	}
 
 	/**
@@ -174,7 +175,9 @@ public class BookingPane extends BasicPane {
 	 */
 	private void fillNameList() {
 		nameListModel.removeAllElements();
-        /* --- insert own code here --- */
+		for (String movie : db.getMovies()) {
+			nameListModel.addElement(movie);
+		}
 	}
 
 	/**
@@ -183,7 +186,10 @@ public class BookingPane extends BasicPane {
 	 */
 	private void fillDateList() {
 		dateListModel.removeAllElements();
-        /* --- insert own code here --- */
+		String movieName = fields[MOVIE_NAME].getText();
+		for (String date : db.getDates(movieName)) {
+			dateListModel.addElement(date);
+		}
 	}
 
 	/**
@@ -212,7 +218,9 @@ public class BookingPane extends BasicPane {
 				return;
 			}
 			String movieName = nameList.getSelectedValue();
-			/* --- insert own code here --- */
+			clearFields();
+			fields[MOVIE_NAME].setText(movieName);
+			fillDateList();
 		}
 	}
 
@@ -234,7 +242,10 @@ public class BookingPane extends BasicPane {
 			}
 			String movieName = nameList.getSelectedValue();
 			String date = dateList.getSelectedValue();
-			/* --- insert own code here --- */
+			fields[PERF_DATE].setText(date);
+			Show show = db.getShow(movieName, date);
+			fields[THEATER_NAME].setText(show.theater);
+			fields[FREE_SEATS].setText(show.free_seats);
 		}
 	}
 
