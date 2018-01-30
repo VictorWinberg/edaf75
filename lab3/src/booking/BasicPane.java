@@ -1,5 +1,7 @@
 package booking;
 
+import db.Database;
+
 import javax.swing.*;
 import javax.swing.border.*;
 

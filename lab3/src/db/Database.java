@@ -1,4 +1,4 @@
-package booking;
+package db;
 
 import java.sql.*;
 import java.util.*;
@@ -64,9 +64,24 @@ public class Database {
         return conn != null;
     }
 
-    /* ================================== */
-    /* --- insert your own code below --- */
-    /* ===============================*== */
+    public boolean hasUser(String username) {
+        User user = null;
+        String query =
+            "SELECT username, name, address, phone\n" +
+            "FROM   users\n" +
+            "WHERE  username = ?\n";
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, username);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                user = new User(rs);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return user != null;
+    }
 
     /*
     public List<...> ...(...) {

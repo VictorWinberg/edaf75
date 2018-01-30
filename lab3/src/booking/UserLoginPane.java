@@ -1,5 +1,7 @@
 package booking;
 
+import db.Database;
+
 import javax.swing.*;
 import java.awt.event.*;
 
@@ -82,7 +84,9 @@ public class UserLoginPane extends BasicPane {
 		 */
 		public void actionPerformed(ActionEvent e) {
 			String userId = fields[USER_ID].getText();
-			/* --- insert own code here --- */
+			if (db.hasUser(userId)) {
+				CurrentUser.instance().loginAs(userId);
+			}
 		}
 	}
 }

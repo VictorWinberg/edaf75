@@ -1,5 +1,7 @@
 package booking;
 
+import db.Database;
+
 import javax.swing.*;
 import javax.swing.event.*;
 
@@ -55,7 +57,7 @@ public class MovieGUI {
 		
 		/* --- change code here --- */
 		/* --- use the name of your own database file --- */
-		if (db.openConnection("movies.sqlite")) {
+		if (db.openConnection("../lab2/movies.sqlite")) {
 			userLoginPane.displayMessage("Connected to database");
 		} else {
 			userLoginPane.displayMessage("Could not connect to database");
