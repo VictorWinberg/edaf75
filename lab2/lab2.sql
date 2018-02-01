@@ -35,24 +35,24 @@ CREATE TABLE theaters (
 
 DROP TABLE IF EXISTS shows;
 CREATE TABLE shows (
-  movie           TEXT NOT NULL,
-  theater         TEXT NOT NULL,
+  movie_title     TEXT NOT NULL,
+  theater_name    TEXT NOT NULL,
   date            DATE NOT NULL,
-  free_seats INTEGER NOT NULL CHECK (free_seats >= 0),
-  PRIMARY KEY     (movie, date),
-  FOREIGN KEY     (movie) REFERENCES movies(title),
-  FOREIGN KEY     (theater) REFERENCES theaters(name)
+  free_seats      INTEGER NOT NULL CHECK (free_seats >= 0),
+  PRIMARY KEY     (movie_title, date),
+  FOREIGN KEY     (movie_title) REFERENCES movies(title),
+  FOREIGN KEY     (theater_name) REFERENCES theaters(name)
 );
 
 DROP TABLE IF EXISTS reservations;
 CREATE TABLE reservations (
   reservation_id  INTEGER,
   username        TEXT NOT NULL,
-  movie           TEXT NOT NULL,
+  movie_title     TEXT NOT NULL,
   date            TEXT NOT NULL,
   PRIMARY KEY     (reservation_id),
   FOREIGN KEY     (username) REFERENCES users(username),
-  FOREIGN KEY     (movie, date) REFERENCES shows(movie, date)
+  FOREIGN KEY     (movie_title, date) REFERENCES shows(movie_title, date)
 );
 
 -- We will do a lot of inserts, so we start a transaction to make it faster.
@@ -234,7 +234,7 @@ VALUES ('AMC', 500),
 -- Populate the shows table.
 
 INSERT
-INTO   shows (movie, theater, date, free_seats)
+INTO   shows (movie_title, theater_name, date, free_seats)
 VALUES ('The Shawshank Redemption', 'AMC', '2019-12-06', 500),
        ('The Shawshank Redemption', 'Castello Lopes', '2023-10-16', 1750),
        ('The Shawshank Redemption', 'Cinamon', '2023-10-09', 1050),
