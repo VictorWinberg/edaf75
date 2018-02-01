@@ -272,11 +272,14 @@ public class BookingPane extends BasicPane {
 			String username = CurrentUser.instance().getCurrentUserId();
 			String movieTitle = nameList.getSelectedValue();
 			String date = dateList.getSelectedValue();
-			if (db.makeReservation(username, movieTitle, date)) {
-				displayMessage("Reservation made with id " + 123 + ".");
+			int reservation_id = db.makeReservation(username, movieTitle, date);
+			if (reservation_id != -1) {
+				displayMessage("Reservation made with id " + reservation_id + ".");
 			} else {
 				displayMessage("Show is fully booked.");
 			}
+			Show show = db.getShow(movieTitle, date);
+			fields[FREE_SEATS].setText(show.freeSeats);
 		}
 	}
 }

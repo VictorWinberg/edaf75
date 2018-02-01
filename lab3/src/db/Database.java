@@ -77,7 +77,7 @@ public class Database {
         try (PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, username);
             ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
+            if (rs.next()) {
                 user = new User(rs);
             }
         } catch (SQLException e) {
@@ -105,7 +105,7 @@ public class Database {
         String query =
             "SELECT date FROM shows\n" +
 			"WHERE movie_title = ?\n" +
-            "ORDER BY date";
+            "ORDER BY date\n";
         try (PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, movieTitle);
             ResultSet rs = ps.executeQuery();
@@ -121,13 +121,19 @@ public class Database {
     public Show getShow(String movieTitle, String date) {
         Show show = null;
         String query =
-            "SELECT * FROM shows\n" +
-            "WHERE movie_title = ? AND date = ?";
+            "SELECT movie_title, theater_name, date,\n" +
+            "       seats - COUNT(reservation_id) free_seats\n" +
+            "FROM shows\n" +
+            "JOIN theaters\n" +
+            "ON theater_name = theaters.name\n" +
+            "LEFT JOIN reservations\n" +
+            "USING (movie_title, date)\n" +
+            "WHERE movie_title = ? AND date = ?\n";
         try (PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, movieTitle);
             ps.setString(2, date);
             ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
+            if (rs.next()) {
                 show = new Show(rs);
             }
         } catch (SQLException e) {
@@ -136,9 +142,12 @@ public class Database {
         return show;
     }
 
-    public boolean makeReservation(String username, String movieTitle, String date) {
+    public int makeReservation(String username, String movieTitle, String date) {
+        int reservation_id = -1;
+
+        // Check if there are free seats
         String query =
-            "SELECT seats, COUNT() count\n" +
+            "SELECT seats, COUNT(reservation_id) count\n" +
             "FROM   shows\n" +
             "JOIN   theaters\n" +
             "ON     theaters.name = theater_name\n" +
@@ -149,17 +158,19 @@ public class Database {
             ps.setString(1, movieTitle);
             ps.setString(2, date);
             ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
+            if (rs.next()) {
                 int seats = rs.getInt("seats");
                 int reservations = rs.getInt("count");
                 if (reservations >= seats) {
-                    return false;
+                    return -1;
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
+            return -1;
         }
+
+        // Make the reservation
         query =
             "INSERT INTO reservations(username, movie_title, date)\n" +
             "VALUES (?, ?, ?)\n";
@@ -168,30 +179,14 @@ public class Database {
             ps.setString(2, movieTitle);
             ps.setString(3, date);
             ps.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
-
-    /*
-    public List<...> ...(...) {
-        List<...> found = new LinkedList<>();
-        String query =
-            "SELECT  ...\n" +
-            "FROM    ...\n" +
-            "...\n";
-        try (PreparedStatement ps = conn.prepareStatement(query)) {
-            ps.setString(1, ...);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                found.add(new ...(rs));
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                reservation_id = rs.getInt(1);
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            return -1;
         }
-        return found;
+        return reservation_id;
     }
-    */
 }
