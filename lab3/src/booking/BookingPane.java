@@ -186,8 +186,8 @@ public class BookingPane extends BasicPane {
 	 */
 	private void fillDateList() {
 		dateListModel.removeAllElements();
-		String movieName = fields[MOVIE_NAME].getText();
-		for (String date : db.getDates(movieName)) {
+		String movieTitle = fields[MOVIE_NAME].getText();
+		for (String date : db.getDates(movieTitle)) {
 			dateListModel.addElement(date);
 		}
 	}
@@ -217,9 +217,9 @@ public class BookingPane extends BasicPane {
 			if (nameList.isSelectionEmpty()) {
 				return;
 			}
-			String movieName = nameList.getSelectedValue();
+			String movieTitle = nameList.getSelectedValue();
 			clearFields();
-			fields[MOVIE_NAME].setText(movieName);
+			fields[MOVIE_NAME].setText(movieTitle);
 			fillDateList();
 		}
 	}
@@ -240,12 +240,12 @@ public class BookingPane extends BasicPane {
 			if (nameList.isSelectionEmpty() || dateList.isSelectionEmpty()) {
 				return;
 			}
-			String movieName = nameList.getSelectedValue();
+			String movieTitle = nameList.getSelectedValue();
 			String date = dateList.getSelectedValue();
 			fields[PERF_DATE].setText(date);
-			Show show = db.getShow(movieName, date);
-			fields[THEATER_NAME].setText(show.theater);
-			fields[FREE_SEATS].setText(show.free_seats);
+			Show show = db.getShow(movieTitle, date);
+			fields[THEATER_NAME].setText(show.theaterName);
+			fields[FREE_SEATS].setText(show.freeSeats);
 		}
 	}
 
@@ -269,9 +269,14 @@ public class BookingPane extends BasicPane {
 				displayMessage("Must login first");
 				return;
 			}
-			String movieName = nameList.getSelectedValue();
+			String username = CurrentUser.instance().getCurrentUserId();
+			String movieTitle = nameList.getSelectedValue();
 			String date = dateList.getSelectedValue();
-			/* --- insert own code here --- */
+			if (db.makeReservation(username, movieTitle, date)) {
+				displayMessage("Reservation made with id " + 123 + ".");
+			} else {
+				displayMessage("Show is fully booked.");
+			}
 		}
 	}
 }

@@ -5,20 +5,20 @@ import java.sql.SQLException;
 
 public class Show {
 
-	public final String movieName;
-	public final String theater;
+	public final String movieTitle;
+	public final String theaterName;
 	public final String date;
-	public final String free_seats;
+	public final String freeSeats;
 
 	public Show(ResultSet rs) throws SQLException {
-		this.movieName = rs.getString("movie");
-		this.theater = rs.getString("theater");
+		this.movieTitle = rs.getString("movie_title");
+		this.theaterName = rs.getString("theater_name");
 		this.date = rs.getString("date");
-		this.free_seats = rs.getString("free_seats");
+		this.freeSeats = rs.getString("free_seats");
 	}
 
 	@Override
 	public String toString() {
-		return movieName + " @ " + theater + " | " + date;
+		return movieTitle + " @ " + theaterName + " | " + date;
 	}
 }
