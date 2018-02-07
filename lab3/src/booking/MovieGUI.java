@@ -55,8 +55,6 @@ public class MovieGUI {
 
 		userLoginPane.displayMessage("Connecting to database ...");
 		
-		/* --- change code here --- */
-		/* --- use the name of your own database file --- */
 		if (db.openConnection("../lab2/movies.sqlite")) {
 			userLoginPane.displayMessage("Connected to database");
 		} else {
