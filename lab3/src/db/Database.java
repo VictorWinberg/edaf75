@@ -181,7 +181,7 @@ public class Database {
             ps.executeUpdate();
             ResultSet rs = ps.getGeneratedKeys();
             if (rs.next()) {
-                reservation_id = rs.getInt(1);
+                reservation_id = rs.getInt("last_insert_rowid()");
             }
         } catch (SQLException e) {
             e.printStackTrace();
