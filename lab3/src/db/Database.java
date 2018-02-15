@@ -147,7 +147,7 @@ public class Database {
 
         // Check if there are free seats
         String query =
-            "SELECT seats, COUNT(reservation_id) count\n" +
+            "SELECT seats - COUNT(reservation_id) free_seats\n" +
             "FROM   shows\n" +
             "JOIN   theaters\n" +
             "ON     theaters.name = theater_name\n" +
@@ -159,9 +159,8 @@ public class Database {
             ps.setString(2, date);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                int seats = rs.getInt("seats");
-                int reservations = rs.getInt("count");
-                if (reservations >= seats) {
+                int free_seats = rs.getInt("free_seats");
+                if (free_seats <= 0) {
                     return -1;
                 }
             }
