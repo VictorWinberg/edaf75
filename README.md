@@ -1,2 +1,2 @@
 # edaf75
-### Databasteknik
+Database Technology | Computer Science
